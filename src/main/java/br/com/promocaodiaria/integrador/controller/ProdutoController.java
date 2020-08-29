@@ -46,9 +46,9 @@ public class ProdutoController {
 	}
 	
 	@GetMapping("promocoes")
-	public ResponseEntity<?> produtosPromocao(Integer page) {
+	public ResponseEntity<?> produtosPromocao(Integer page, Integer rows) {
 		
-		PageRequest of = PageRequest.of(page, 10, Sort.by(Direction.ASC, "descricao"));
+		PageRequest of = PageRequest.of(page, rows, Sort.by(Direction.ASC, "descricao"));
 		
 		return ResponseEntity.ok(produtoPromoDiariaRepository.findAll(of));
 	}
