@@ -16,7 +16,7 @@ import br.com.promocaodiaria.integrador.pg.model.ProdutoPromoDiaria;
 import br.com.promocaodiaria.integrador.pg.repository.ProdutoPromoDiariaRepository;
 import br.com.promocaodiaria.integrador.rowmapper.ProdutoClienteWrapperRowMapper;
 import br.com.promocaodiaria.integrador.service.strategy.QueryStrategy;
-import lombok.NonNull;
+
 
 @Repository
 public class ProdutoClienteRepositoryImpl implements ProdutoClienteRepositoryCustom {

@@ -15,7 +15,8 @@ class QueriesTGA {
 			m.DTA_INICIO as data_inicio_promocao,
 			m.DTA_TERMINIO as data_termino_promocao,
 			iif (a.IDPROMOCAO <> '0', iif (i.tipo = 'P', SUM (a.PRECO1 - (a.PRECO1 * i.valor / 100)), i.VALOR), null) as valor_promocao,
-			u.DESCRICAO as unidade_medida
+			u.DESCRICAO as unidade_medida,
+			iif( a.INATIVO = 'F','T','F') as ativo
 		FROM TPRODUTO a
 		LEFT JOIN TPROMOCAO m
 			ON a.IDPROMOCAO = m.IDPROMOCAO
@@ -25,8 +26,8 @@ class QueriesTGA {
 			ON a.unidade = u.CODUND
 		LEFT JOIN TCLASSFISCAL f
 			ON f.CODCLAS = a.CODCLAS
-		WHERE a.INATIVO = 'F'
-			AND %s
+		WHERE 
+			%s
 		GROUP BY 
 			a.ID, 
 			a.IDPROMOCAO,
@@ -43,7 +44,8 @@ class QueriesTGA {
 			m.valor, 
 			i.VALOR, 
 			u.DESCRICAO, 
-			f.CODCLAS
+			f.CODCLAS,
+			a.INATIVO
 	"""
 
 	public static final String select_produtos_por_id = String.format(select_produtos, " a.CODPRD = :idIdentificador");

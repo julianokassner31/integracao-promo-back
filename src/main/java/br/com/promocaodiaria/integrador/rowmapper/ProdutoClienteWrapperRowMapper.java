@@ -3,7 +3,6 @@ package br.com.promocaodiaria.integrador.rowmapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDateConverter;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDateTimeConverter;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -27,6 +26,7 @@ public class ProdutoClienteWrapperRowMapper implements RowMapper<ProdutoClienteW
 		wrapper.setDtFim(new LocalDateTimeConverter().convertToEntityAttribute(rs.getDate("data_termino_promocao")));
 		wrapper.setVlPromocao(rs.getBigDecimal("valor_promocao"));
 		wrapper.setUniMedida(rs.getString("unidade_medida"));
+		wrapper.setAtivo(rs.getBoolean("ativo"));
 		
 		return wrapper;
 	}

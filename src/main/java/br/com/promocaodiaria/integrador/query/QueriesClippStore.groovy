@@ -14,7 +14,8 @@ class QueriesClippStore {
 			c.DT_INICIO as data_inicio_promocao,
 			c.DT_FIM as data_termino_promocao,
 			c.PRC_VENDA as valor_promocao,
-			u.DESCRICAO as unidade_medida
+			u.DESCRICAO as unidade_medida,
+			iif( b.STATUS = 'A','T','F') as ativo
 		FROM TB_EST_PRODUTO a INNER JOIN TB_ESTOQUE b
 			ON b.ID_ESTOQUE = a.ID_IDENTIFICADOR
 		left JOIN TB_ESTOQUE_PRECOS c
