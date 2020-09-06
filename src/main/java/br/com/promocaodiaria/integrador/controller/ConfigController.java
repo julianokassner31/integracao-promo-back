@@ -1,13 +1,18 @@
 package br.com.promocaodiaria.integrador.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.promocaodiaria.integrador.dto.ConfigDto;
+import br.com.promocaodiaria.integrador.dto.UsuarioDto;
 import br.com.promocaodiaria.integrador.pg.model.Config;
 import br.com.promocaodiaria.integrador.pg.repository.ConfigRepository;
 
@@ -31,16 +36,56 @@ public class ConfigController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> saveConfig(@RequestBody Config config) {
+	public ResponseEntity<?> saveConfig(@RequestBody ConfigDto configDto) {
 		
-		config.setTempoScan(config.getTempoScan() * 60 * 1000);
+		Optional<Config> configOpt = configRepository.findById(configDto.getId());
 		
-		Config saveAndFlush = configRepository.saveAndFlush(config);
+		if(configOpt.isPresent()) {
+			
+			Config config = configOpt.get();
+			
+			config.setTempoScan(configDto.getTempoScan() * 60 * 1000);
+			config.setSistema(configDto.getSistema());
+			config.setToken(configDto.getToken());
+			config.setUrlIntegracao(configDto.getUrlIntegracao());
+			
+			Config saveAndFlush = configRepository.saveAndFlush(config);
+			
+			Long minutes = saveAndFlush.getTempoScan() / 1000 / 60;
+			
+			config.setTempoScan(minutes);
+			
+			return ResponseEntity.ok(config);
+		}
 		
-		Long minutes = saveAndFlush.getTempoScan() / 1000 / 60;
+		return ResponseEntity.badRequest().build();
+	}
+	
+	@PostMapping("save-usuario")
+	public ResponseEntity<?> saveUsuario(@RequestBody UsuarioDto usuarioDto) {
 		
-		config.setTempoScan(minutes);
+		Optional<Config> configOpt = configRepository.findById(usuarioDto.getIdConfig());
 		
-		return ResponseEntity.ok(config);
+		if(configOpt.isPresent()) {
+			
+			Config config = configOpt.get();
+			BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+			String encodePasswd = bCryptPasswordEncoder.encode(usuarioDto.getPassword());
+			
+			if (bCryptPasswordEncoder.matches(encodePasswd, config.getPassword())) {
+				
+				config.setPassword(bCryptPasswordEncoder.encode(usuarioDto.getNewPassword()));
+				
+				configRepository.saveAndFlush(config);
+				
+				return ResponseEntity.ok(config);
+			
+			} else {
+				
+				return ResponseEntity.notFound().build();
+			}
+		}
+		
+		return ResponseEntity.badRequest().build();
 	}
 }

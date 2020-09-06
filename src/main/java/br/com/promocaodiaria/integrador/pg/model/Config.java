@@ -11,11 +11,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 
 @Entity
 @Table(name="config")
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Config implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -36,5 +40,16 @@ public class Config implements Serializable{
 	@Column(name="sistema")
 	@Enumerated(EnumType.STRING)
 	private TipoSistemaEnum sistema;
+	
+	@Column(name="username")
+	private String username;
+	
+	@JsonIgnore
+	@Column(name="password")
+	private String password;
 
+	@JsonIgnore
+	@Column(name="enabled")
+	private boolean enabled;
 }
+
