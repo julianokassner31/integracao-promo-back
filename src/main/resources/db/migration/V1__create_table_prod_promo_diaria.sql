@@ -42,3 +42,15 @@ CREATE TABLE config (
 -- tempo scan = 5 minutos
 INSERT INTO config (id, tempo_scan, url_integracao, token, sistema) 
 VALUES (1, 300000, 'https://promocaodiaria.com/wshomologacao', '7c8bb07ff4b9bf1bbb6215f95c1b04d2', 'CLIPP');
+
+ALTER TABLE PROD_PROMO_DIARIA 
+DROP DT_INICIO;
+
+ALTER TABLE PROD_PROMO_DIARIA 
+DROP DT_FIM;
+
+ALTER TABLE PROD_PROMO_DIARIA 
+ADD DT_INICIO timestamp;
+
+ALTER TABLE PROD_PROMO_DIARIA 
+ADD DT_FIM timestamp;

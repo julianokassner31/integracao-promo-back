@@ -7,9 +7,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,11 +46,9 @@ public class ProdutoController {
 	}
 	
 	@GetMapping("promocoes")
-	public ResponseEntity<?> produtosPromocao(Integer page, Integer rows) {
+	public ResponseEntity<?> produtosPromocao() {
 		
-		PageRequest of = PageRequest.of(page, rows, Sort.by(Direction.ASC, "descricao"));
-		
-		return ResponseEntity.ok(produtoPromoDiariaRepository.findAll(of));
+		return ResponseEntity.ok(produtoPromoDiariaRepository.findAll());
 	}
 
 	@PostMapping
