@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.promocaodiaria.integrador.dto.ConfigDto;
 import br.com.promocaodiaria.integrador.dto.UsuarioDto;
 import br.com.promocaodiaria.integrador.pg.model.Config;
+import br.com.promocaodiaria.integrador.pg.model.TipoSistemaEnum;
 import br.com.promocaodiaria.integrador.pg.repository.ConfigRepository;
 
 @RestController
@@ -87,5 +88,12 @@ public class ConfigController {
 		}
 		
 		return ResponseEntity.badRequest().build();
+	}
+	
+	@GetMapping("sistemas")
+	public ResponseEntity<?> getSistemas() {
+	
+		
+		return ResponseEntity.ok(TipoSistemaEnum.values());
 	}
 }
