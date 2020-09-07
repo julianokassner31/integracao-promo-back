@@ -70,12 +70,13 @@ public class ConfigController {
 		if(configOpt.isPresent()) {
 			
 			Config config = configOpt.get();
-			BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-			String encodePasswd = bCryptPasswordEncoder.encode(usuarioDto.getPassword());
 			
-			if (bCryptPasswordEncoder.matches(encodePasswd, config.getPassword())) {
+			BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+			
+			if (bCryptPasswordEncoder.matches(usuarioDto.getPassword(), config.getPassword())) {
 				
 				config.setPassword(bCryptPasswordEncoder.encode(usuarioDto.getNewPassword()));
+				config.setUsername(usuarioDto.getUsername());
 				
 				configRepository.saveAndFlush(config);
 				
