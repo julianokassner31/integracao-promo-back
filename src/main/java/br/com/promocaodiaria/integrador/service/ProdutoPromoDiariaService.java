@@ -110,7 +110,7 @@ public class ProdutoPromoDiariaService {
 
 	private boolean stockHadUpdate(ProdutoPromoDiaria produto, ProdutoClienteWrapper produtoCliente) {
 
-		return !produto.getQtAtual().equals(produtoCliente.getQtAtual());
+		return produto.getQtAtual() != produtoCliente.getQtAtual();
 
 	}
 
@@ -120,8 +120,8 @@ public class ProdutoPromoDiariaService {
 				&& isEquals(produto.getNome(), produtoCliente.getNome())
 				&& isEquals(produto.getDescricao(), produtoCliente.getDescricao())
 				&& isEquals(produto.getUniMedida(), produtoCliente.getUniMedida())
-				&& isEquals(produto.getValor(), produtoCliente.getValor())
-				&& isEquals(produto.getVlPromocao(), produtoCliente.getVlPromocao())
+				&& produto.getValor() == produtoCliente.getValor()
+				&& produto.getVlPromocao()== produtoCliente.getVlPromocao()
 				&& isEquals(produto.getDtInicio(), produtoCliente.getDtInicio())
 				&& isEquals(produto.getDtFim(), produtoCliente.getDtFim())
 				&& isEquals(produto.isAtivo(), produtoCliente.isAtivo()));

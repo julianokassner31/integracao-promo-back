@@ -1,7 +1,5 @@
 package br.com.promocaodiaria.integrador.pg.model;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -42,15 +40,14 @@ public class ProdutoPromoDiaria {
 	@Column(name="dt_fim")
 	private LocalDateTime dtFim;
 	
-	@NonNull
 	@Column(name="valor")
-	private BigDecimal valor;
+	private double valor;
 	
 	@Column(name="vl_promocao")
-	private BigDecimal vlPromocao;
+	private double vlPromocao;
 	
 	@Column(name="qt_atual")
-	private BigDecimal qtAtual;
+	private double qtAtual;
 	
 	@Column(name="cod_barra")
 	private String codBarra; 
