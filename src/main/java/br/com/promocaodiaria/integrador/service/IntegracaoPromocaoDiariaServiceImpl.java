@@ -50,10 +50,6 @@ public class IntegracaoPromocaoDiariaServiceImpl implements IntegracaoPromocaoDi
 		
 		HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
 		
-		Response post = restTemplateService.post(url, httpEntity, Response.class);
-		
-		post.getMensagem();
-		
 		return restTemplateService.post(url, httpEntity, Response.class);
 	}
 
