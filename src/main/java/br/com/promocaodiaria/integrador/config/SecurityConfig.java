@@ -1,5 +1,9 @@
 package br.com.promocaodiaria.integrador.config;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,16 +11,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import br.com.promocaodiaria.integrador.query.UsuarioSelect;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	@Autowired
+	@Qualifier("pgDataSource")
+	DataSource datasource;
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-			.withUser("admin")
-			.password("{bcrypt}$2a$10$.azX3fZYpIkVKxvtkaum4O9BslfFIvQ6ybwQrJFe6h7tAdsVa2xvu")
-				.roles("ADMIN");
+		auth
+		.jdbcAuthentication()
+		.dataSource(datasource)
+		.passwordEncoder(new BCryptPasswordEncoder())
+		.usersByUsernameQuery(UsuarioSelect.select_usuario)
+		.authoritiesByUsernameQuery(UsuarioSelect.select_authority);
 	}
 
 	@Override
@@ -27,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.formLogin()
 			.loginProcessingUrl("/login")
-            .defaultSuccessUrl("/app/index.html", true)
+            .defaultSuccessUrl("/index.html", true)
 			.and()
 			.httpBasic()
 			.and()
