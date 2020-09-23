@@ -51,5 +51,5 @@ class QueriesTGA {
 
 	public static final String select_produtos_por_id = String.format(select_produtos, " a.CODPRD = :idIdentificador");
 
-	public static final String select_produtos_por_descricao = String.format(select_produtos, " a.NOMEFANTASIA LIKE UPPER('%'||:query||'%') AND a.CODPRD NOT IN (:idsNotIn) ");
+	public static final String select_produtos_por_descricao = String.format(select_produtos, " (a.NOMEFANTASIA LIKE UPPER('%'||:query||'%') OR a.CODPRD LIKE ('%'||:query||'%')) AND a.CODPRD NOT IN (:idsNotIn) ");
 }

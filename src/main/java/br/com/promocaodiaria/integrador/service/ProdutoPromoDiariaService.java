@@ -121,7 +121,7 @@ public class ProdutoPromoDiariaService {
 				&& isEquals(produto.getDescricao(), produtoCliente.getDescricao())
 				&& isEquals(produto.getUniMedida(), produtoCliente.getUniMedida())
 				&& produto.getValor() == produtoCliente.getValor()
-				&& produto.getVlPromocao()== produtoCliente.getVlPromocao()
+				&& produto.getVlPromocao() == produtoCliente.getVlPromocao()
 				&& isEquals(produto.getDtInicio(), produtoCliente.getDtInicio())
 				&& isEquals(produto.getDtFim(), produtoCliente.getDtFim())
 				&& isEquals(produto.isAtivo(), produtoCliente.isAtivo()));
