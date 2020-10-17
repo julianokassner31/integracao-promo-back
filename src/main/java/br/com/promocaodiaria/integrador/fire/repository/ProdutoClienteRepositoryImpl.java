@@ -52,15 +52,4 @@ public class ProdutoClienteRepositoryImpl implements ProdutoClienteRepositoryCus
 	    
 	    return npjt.queryForObject(queryStrategy.selectProdutosPorId(), params, new ProdutoClienteWrapperRowMapper());
 	}
-
-	@Override
-	public ProdutoClienteWrapper getProdutoAlterado(ProdutoPromoDiaria produtoPromoDiaria) {
-		Map<String,Object> params = new HashMap<String,Object>();
-	    
-		params.put("idIdentificador", produtoPromoDiaria.getIdIdentificador());
-	    
-	    NamedParameterJdbcTemplate npjt = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
-	    
-	    return npjt.queryForObject(queryStrategy.selectProdutosPorId(), params, new ProdutoClienteWrapperRowMapper());
-	}
 }
