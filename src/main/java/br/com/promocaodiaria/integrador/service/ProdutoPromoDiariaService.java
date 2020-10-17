@@ -1,5 +1,7 @@
+
 package br.com.promocaodiaria.integrador.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,21 +34,101 @@ public class ProdutoPromoDiariaService {
 
 		produtos.forEach(produtoDto -> {
 
-			ProdutoClienteWrapper produtoCliente = estoqueRepository
-					.findProdutoClienteById(produtoDto.getIdIdentificador());
-
 			ProdutoPromoDiaria produto = new ProdutoPromoDiaria();
+			produto.setIdIdentificador(produtoDto.getIdIdentificador());
+			produto.setSetor(produtoDto.getSetor());
+
+			log.info("Primeira tentativa de cadastrar produto {}", produto.toString());
+			
+			save(produto);
+
+		});
+	}
+	
+	public void save(ProdutoPromoDiaria produto) {
+
+			ProdutoClienteWrapper produtoCliente = estoqueRepository
+					.findProdutoClienteById(produto.getIdIdentificador());
 
 			parserProduto(produto, produtoCliente);
-
-			produto.setSetor(produtoDto.getSetor());
 
 			Response response = integracaoPromocaoDiariaService.adicionarProduto(produto);
 
 			verifyResponse(response, produto);
 
+			
+			if (produto.isSync()) {
+				
+				produto.setDtInsercaoApi(LocalDateTime.now());
+
+			
+			} else if (produtoJaCadastrado(produto)) {
+			
+				produto.setDtInsercaoApi(LocalDateTime.now());
+				
+				sincronizar(produto);
+			}
+			
 			produtoPromoDiariaRepository.save(produto);
-		});
+	}
+	
+	
+	private boolean produtoJaCadastrado(ProdutoPromoDiaria produto) {
+		
+		boolean contains = produto.getLog().contains("Já existe um produto");
+		
+		if (contains) {
+			log.info("{} produto: {}", produto.getLog(), produto.toString());
+		}
+		
+		return contains;
+	}
+	
+	public void delete(ProdutoPromoDiaria produto) {
+		
+		if (produto.getDtInsercaoApi() == null) {
+			log.info("Produto a ser deletado nunca subiu para api, deletando... {}", produto.toString());
+			produtoPromoDiariaRepository.delete(produto);
+			
+			return;
+		}
+		
+		log.info("Produto a ser deletado {}", produto.toString());
+		
+		boolean isAtivo = produto.isAtivo();
+		
+		try {
+
+			produto.setAtivo(false);
+			
+			Response response = integracaoPromocaoDiariaService.editarProduto(produto);
+
+			verifyResponse(response, produto);
+			
+			if(produto.isSync()) {
+				
+				produtoPromoDiariaRepository.delete(produto);
+				
+				log.info("Produto deletado com sucesso!");
+			
+			} else {
+				log.info("Ocorreu um erro ao tentar deletar produto");
+				
+				produto.setAtivo(isAtivo);
+				
+				produtoPromoDiariaRepository.saveAndFlush(produto);
+			}
+
+		} catch (Exception e) {
+			log.info("Ocorreu um erro ao tentar deletar produto ex: {}", e);
+			
+			produto.setSync(false);
+			produto.setLog(e.getMessage());
+			
+			produto.setAtivo(isAtivo);
+			
+			produtoPromoDiariaRepository.saveAndFlush(produto);
+		}
 	}
 
 	public ProdutoPromoDiaria update(ProdutoPromoDiaria produto, ProdutoClienteWrapper produtoCliente,
@@ -81,20 +163,28 @@ public class ProdutoPromoDiariaService {
 
 		try {
 
-			log.info("Produto a ser atualizado {}", produto.toString());
-
-			ProdutoClienteWrapper produtoCliente = estoqueRepository.getProdutoAlterado(produto);
-
-			boolean stockHadUpdate = stockHadUpdate(produto, produtoCliente);
-			boolean produtoHadUpdate = produtoHadUpdate(produto, produtoCliente);
-
-			if (produtoCliente != null && (produtoHadUpdate || stockHadUpdate)) {
-
-				boolean updateOnlyStock = !produtoHadUpdate && stockHadUpdate;
-
-				ProdutoPromoDiaria atualizado = update(produto, produtoCliente, updateOnlyStock);
-
-				log.info("Produto Atulizado com sucesso produto {}", atualizado.toString());
+			if(produto.getDtInsercaoApi() == null) {
+				
+				log.info("Produto ainda nao foi inserido na api fazendo uma nova tentativa {}", produto.toString());
+				save(produto);
+				
+			} else {
+			
+				log.info("Produto a ser atualizado {}", produto.toString());
+	
+				ProdutoClienteWrapper produtoCliente = estoqueRepository.getProdutoAlterado(produto);
+	
+				boolean stockHadUpdate = stockHadUpdate(produto, produtoCliente);
+				boolean produtoHadUpdate = produtoHadUpdate(produto, produtoCliente);
+	
+				if (produtoCliente != null && (produtoHadUpdate || stockHadUpdate)) {
+	
+					boolean updateOnlyStock = !produtoHadUpdate && stockHadUpdate;
+	
+					ProdutoPromoDiaria atualizado = update(produto, produtoCliente, updateOnlyStock);
+	
+					log.info("Produto Atualizado com sucesso produto {}", atualizado.toString());
+				}
 			}
 
 		} catch (EmptyResultDataAccessException e) {
@@ -150,6 +240,7 @@ public class ProdutoPromoDiariaService {
 
 			produto.setSync(true);
 			produto.setLog(null);
+			
 
 		} else {
 			produto.setSync(false);

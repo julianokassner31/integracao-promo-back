@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
-import br.com.promocaodiaria.integrador.fire.repository.ProdutoClienteRepository;
 import br.com.promocaodiaria.integrador.pg.model.Config;
 import br.com.promocaodiaria.integrador.pg.model.ProdutoPromoDiaria;
 import br.com.promocaodiaria.integrador.pg.repository.ConfigRepository;
@@ -30,9 +29,6 @@ public class Agendador implements SchedulingConfigurer {
 	@Autowired
 	ProdutoPromoDiariaRepository produtoPromoDiariaRepository;
 
-	@Autowired
-	ProdutoClienteRepository estoqueRepository;
-	
 	@Autowired
 	ProdutoPromoDiariaService produtoPromoDiariaService;
 

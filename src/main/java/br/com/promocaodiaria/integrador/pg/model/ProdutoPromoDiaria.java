@@ -69,4 +69,7 @@ public class ProdutoPromoDiaria {
 	
 	@Column(name="setor")
 	private String setor;
+	
+	@Column(name="dt_insercao_api")
+	private LocalDateTime dtInsercaoApi;
 }

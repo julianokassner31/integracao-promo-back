@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class IntegradorApplication implements ErrorController {
 	
 	public static void main(String[] args) {
+//		System.setProperty("javax.net.debug","all");
 		SpringApplication.run(IntegradorApplication.class, args);
 		
 	}

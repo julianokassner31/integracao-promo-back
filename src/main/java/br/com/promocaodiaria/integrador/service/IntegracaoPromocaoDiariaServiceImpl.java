@@ -74,6 +74,7 @@ public class IntegracaoPromocaoDiariaServiceImpl implements IntegracaoPromocaoDi
 		jsonObject.put("valor", produtoPromoDiaria.getValor());
 		jsonObject.put("valor_promocao", produtoPromoDiaria.getVlPromocao());
 		jsonObject.put("referencia_produto", produtoPromoDiaria.getIdIdentificador());
+		jsonObject.put("status", produtoPromoDiaria.isAtivo());
 		
 		return jsonObject;
 	}
