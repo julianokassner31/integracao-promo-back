@@ -30,23 +30,32 @@ public class ProdutoClienteRepositoryImpl implements ProdutoClienteRepositoryCus
 	@Autowired
 	ProdutoPromoDiariaRepository produtoPromoDiariaRepository;
 	
-	public List<ProdutoClienteWrapper> findProdutoClienteByDescricao(String query) {
+	public Map<String, Object> findProdutoClienteByDescricao(String query, int offset) {
 		
 		Map<String,Object> params = new HashMap<String,Object>();
 	    params.put("query", query);
-	    
+	    params.put("offset", offset);
+
 	    List<String> idsNotIn = produtoPromoDiariaRepository.findAll().stream().map(ProdutoPromoDiaria::getIdIdentificador).collect(Collectors.toList());
 	    params.put("idsNotIn", idsNotIn.isEmpty() ? Arrays.asList("-1") : idsNotIn);
 
 	    NamedParameterJdbcTemplate npjt = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
-	    
-	    return npjt.query(queryStrategy.selectProdutosPorDescricao(), params, new ProdutoClienteWrapperRowMapper());
+
+		List<ProdutoClienteWrapper> produtos = npjt.query(queryStrategy.selectProdutosPorDescricao(), params, new ProdutoClienteWrapperRowMapper());
+		Long count = npjt.queryForObject(queryStrategy.count(), params, Long.class);
+
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("count", count);
+		map.put("produtos", produtos);
+
+		return map;
 	}
 	
 	public ProdutoClienteWrapper findProdutoClienteById(String id) {
 		
 		Map<String,Object> params = new HashMap<String,Object>();
 	    params.put("idIdentificador", id);
+		params.put("offset", 0);
 
 	    NamedParameterJdbcTemplate npjt = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
 	    

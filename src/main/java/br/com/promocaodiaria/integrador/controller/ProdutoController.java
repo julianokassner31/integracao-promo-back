@@ -41,9 +41,9 @@ public class ProdutoController {
 	ProdutoPromoDiariaRepository produtoPromoDiariaRepository;
 	
 	@GetMapping
-	public List<ProdutoClienteWrapper> findEstoqueByName(@RequestParam String query) {
-		
-		return estoqueRepository.findProdutoClienteByDescricao(query);
+	public Map<String, Object> findEstoqueByName(@RequestParam String query, @RequestParam int offset) {
+
+		return estoqueRepository.findProdutoClienteByDescricao(query, offset);
 	}
 	
 	@GetMapping("promocoes")
@@ -64,7 +64,7 @@ public class ProdutoController {
 	public Map<String, String> version() {
 		
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("versao", buildProperties.get("versao.projeto"));
+		map.put("versao", buildProperties.get("build.version"));
 		
 		return map;
 	}

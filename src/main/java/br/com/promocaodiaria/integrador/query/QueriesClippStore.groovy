@@ -3,7 +3,8 @@ package br.com.promocaodiaria.integrador.query
 class QueriesClippStore {
 	
 	private static final String select_produtos = """
-		SELECT 
+		SELECT
+			FIRST 20 SKIP :offset 
 			a.ID_IDENTIFICADOR as id_identificador,
 			a.QTD_ATUAL as qtd_atual,
 			a.COD_BARRA as cod_barra,
@@ -24,10 +25,21 @@ class QueriesClippStore {
 			ON u.UNIDADE = b.UNI_MEDIDA 
 		WHERE
 	"""
-	
+
+	public static final String condition = """
+		a.ID_IDENTIFICADOR NOT IN (SELECT a.ID_IDENTIFICADOR FROM TB_EST_PRODUTO a
+			WHERE a.ID_IDENTIFICADOR IN (:idsNotIn)) AND b.DESCRICAO LIKE '%'||:query||'%'"""
+
 	public static final String select_produtos_por_id = select_produtos.concat(" a.ID_IDENTIFICADOR = :idIdentificador")
 
 	public static final String select_produtos_por_descricao = select_produtos
-		.concat(" a.ID_IDENTIFICADOR NOT IN (SELECT tep.ID_IDENTIFICADOR FROM TB_EST_PRODUTO tep WHERE tep.ID_IDENTIFICADOR IN (:idsNotIn))")
-		.concat(" AND b.DESCRICAO LIKE '%'||:query||'%'")
+		.concat(condition)
+
+	public static final String count = """
+		SELECT 
+			count(a.ID_IDENTIFICADOR)
+		FROM TB_EST_PRODUTO a INNER JOIN TB_ESTOQUE b
+			ON b.ID_ESTOQUE = a.ID_IDENTIFICADOR
+		WHERE
+	""".concat(condition)
 }

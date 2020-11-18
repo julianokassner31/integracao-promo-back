@@ -1,14 +1,13 @@
 package br.com.promocaodiaria.integrador.fire.repository;
 
-import java.util.List;
-
+import br.com.promocaodiaria.integrador.fire.model.ProdutoClienteWrapper;
 import org.springframework.stereotype.Repository;
 
-import br.com.promocaodiaria.integrador.fire.model.ProdutoClienteWrapper;
+import java.util.Map;
 
 @Repository
 public interface ProdutoClienteRepositoryCustom {
 
-	public List<ProdutoClienteWrapper> findProdutoClienteByDescricao(String query);
+	public Map<String, Object> findProdutoClienteByDescricao(String query, int offset);
 	public ProdutoClienteWrapper findProdutoClienteById(String id);
 }

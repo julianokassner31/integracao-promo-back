@@ -3,7 +3,8 @@ package br.com.promocaodiaria.integrador.query
 class QueriesTGA {
 
 	private static final String select_produtos = """
-		SELECT  
+		SELECT
+			FIRST 20 SKIP :offset
 			a.ID,
 			a.CODPRD as id_identificador,
 			a.SALDOGERALFISICO as qtd_atual,
@@ -49,7 +50,16 @@ class QueriesTGA {
 			a.dtcadastramento
 	"""
 
+	private static final String condition = " (a.NOMEFANTASIA LIKE UPPER('%'||:query||'%') OR a.CODPRD LIKE ('%'||:query||'%')) AND a.CODPRD NOT IN (:idsNotIn) "
+
 	public static final String select_produtos_por_id = String.format(select_produtos, " a.CODPRD = :idIdentificador");
 
-	public static final String select_produtos_por_descricao = String.format(select_produtos, " (a.NOMEFANTASIA LIKE UPPER('%'||:query||'%') OR a.CODPRD LIKE ('%'||:query||'%')) AND a.CODPRD NOT IN (:idsNotIn) ");
+	public static final String select_produtos_por_descricao = String.format(select_produtos, condition);
+
+	public static final String count = """
+		SELECT
+			count(a.ID)
+		FROM TPRODUTO a
+		WHERE 
+	""".concat(condition)
 }
